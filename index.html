@@ -1,530 +1,550 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <title>Sustain4METU – Green Campus Tour</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <title>Sustain4METU – Green Campus Tour</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
 
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: #050816;
-            color: #111827;
-            height: 100vh;
-            overflow: hidden;
-        }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #050816;
+      color: #111827;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-        .app {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
+    .app {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
 
-        /* ==== TOP BAR (always visible, clickable) ==== */
-        .header {
-            position: fixed;
-            /* fixed so it's always visible */
-            top: 12px;
-            left: 12px;
-            right: auto;
-            z-index: 10000;
-            /* above map + markers + sheet */
-            pointer-events: auto;
-        }
+    /* ==== TOP BAR (always visible, clickable) ==== */
+    .header {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      right: auto;
+      z-index: 10000;
+      pointer-events: auto;
+    }
 
-        .header-inner {
-            background: rgba(15, 23, 42, 0.9);
-            color: #e5e7eb;
-            padding: 0.55rem 0.9rem;
-            border-radius: 999px;
-            display: inline-flex;
-            flex-direction: column;
-            gap: 0.15rem;
-            backdrop-filter: blur(10px);
-            cursor: pointer;
-            /* we use this as the 'flicker all pins' button */
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(34, 197, 94, 0.25);
-            user-select: none;
-        }
+    .header-inner {
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      display: inline-flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      border: 1px solid rgba(34,197,94,0.25);
+      user-select: none;
+    }
 
-        .title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            line-height: 1;
-        }
+    .title { font-size: 0.95rem; font-weight: 700; line-height: 1; }
+    .subtitle { font-size: 0.7rem; opacity: 0.85; }
 
-        .subtitle {
-            font-size: 0.7rem;
-            opacity: 0.85;
-        }
+    /* ==== MAP ==== */
+    .map-container {
+      position: relative;
+      flex: 1;
+      overflow: hidden;
+      transition: transform 0.35s ease, filter 0.35s ease;
+    }
 
-        /* ==== MAP ==== */
-        .map-container {
-            position: relative;
-            flex: 1;
-            overflow: hidden;
-            transition: transform 0.35s ease, filter 0.35s ease;
-        }
+    .map-container.zoomed {
+      transform: scale(1.02);
+      filter: brightness(0.85);
+    }
 
-        .map-container.zoomed {
-            transform: scale(1.02);
-            filter: brightness(0.85);
-        }
+    #map { width: 100%; height: 100%; }
 
-        #map {
-            width: 100%;
-            height: 100%;
-        }
+    /* ==== BOTTOM SHEET ==== */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.55);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 30;
+    }
 
-        /* ==== BOTTOM SHEET ==== */
-        .sheet-backdrop {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.55);
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease;
-            z-index: 30;
-        }
+    .sheet-backdrop.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
 
-        .sheet-backdrop.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
+    .sheet {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: -90%;
+      background: #f9fafb;
+      border-radius: 1.25rem 1.25rem 0 0;
+      box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.5);
+      padding: 0.75rem 1rem 1rem;
+      max-height: 60vh;           /* default peek height */
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: bottom 0.3s ease, max-height 0.25s ease;
+      z-index: 40;
+    }
 
-        .sheet {
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: -70%;
-            background: #f9fafb;
-            border-radius: 1.25rem 1.25rem 0 0;
-            box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.5);
-            padding: 0.75rem 1rem 1rem;
-            max-height: 70%;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            transition: bottom 0.3s ease;
-            z-index: 40;
-        }
+    .sheet.visible {
+      bottom: 0;
+    }
 
-        .sheet.visible {
-            bottom: 0;
-        }
+    /* expanded state (drag up) */
+    .sheet.expanded {
+      max-height: 95vh;
+    }
 
-        .sheet-handle {
-            width: 40px;
-            height: 4px;
-            border-radius: 999px;
-            background: #e5e7eb;
-            margin: 0 auto 0.25rem;
-        }
+    @media (max-width: 640px) {
+      .sheet { max-height: 65vh; }
+    }
 
-        .sheet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 0.5rem;
-        }
+    .sheet-handle {
+      width: 40px;
+      height: 4px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      margin: 0 auto 0.25rem;
+    }
 
-        .sheet-title {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #111827;
-        }
+    .sheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-        .sheet-tag {
-            font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
-            border-radius: 999px;
-            border: 1px solid #bbf7d0;
-            color: #15803d;
-            background: #dcfce7;
-            white-space: nowrap;
-        }
+    .sheet-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111827;
+    }
 
-        .sheet-close {
-            border: none;
-            background: transparent;
-            font-size: 1.25rem;
-            line-height: 1;
-            cursor: pointer;
-            color: #6b7280;
-            padding: 0.25rem;
-        }
+    .sheet-tag {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+      background: #dcfce7;
+      white-space: nowrap;
+    }
 
-        .sheet-body {
-            font-size: 0.85rem;
-            color: #374151;
-            line-height: 1.4;
-            overflow-y: auto;
-            padding-right: 0.25rem;
-            margin-top: 0.25rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
+    .sheet-close {
+      border: none;
+      background: transparent;
+      font-size: 1.25rem;
+      line-height: 1;
+      cursor: pointer;
+      color: #6b7280;
+      padding: 0.25rem;
+    }
 
-        .sheet-image-wrapper {
-            width: 100%;
-            border-radius: 0.75rem;
-            overflow: hidden;
-            background: #e5e7eb;
-            flex-shrink: 0;
-        }
+    .sheet-body {
+      font-size: 0.85rem;
+      color: #374151;
+      line-height: 1.4;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+      margin-top: 0.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
 
-        .sheet-image-wrapper img {
-            display: block;
-            width: 100%;
-            height: auto;
-        }
+    .sheet-image-wrapper {
+      width: 100%;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      background: #e5e7eb;
+      flex-shrink: 0;
+    }
 
-        .sheet-text p+p {
-            margin-top: 0.4rem;
-        }
+    .sheet-image-wrapper img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
 
-        .sheet-meta {
-            margin-top: 0.1rem;
-            font-size: 0.75rem;
-            color: #6b7280;
-        }
+    .sheet-text p + p {
+      margin-top: 0.4rem;
+    }
 
-        .sheet-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.3rem;
-            margin-top: 0.35rem;
-            padding-bottom: 0.2rem;
-        }
+    .sheet-meta {
+      margin-top: 0.1rem;
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
 
-        .sheet-badge {
-            font-size: 0.7rem;
-            padding: 0.2rem 0.55rem;
-            border-radius: 999px;
-            background: #eff6ff;
-            color: #1d4ed8;
-        }
+    .sheet-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.35rem;
+      padding-bottom: 0.2rem;
+    }
 
-        /* ==== EMOJI MARKERS (black bubble + green glow dot) ==== */
-        .s4m-emoji-marker {
-            /* Leaflet gives this element class 'leaflet-marker-icon s4m-emoji-marker' */
-            width: 32px;
-            height: 40px;
-            /* room for bubble + tiny dot */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    .sheet-badge {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1d4ed8;
+    }
 
-        .s4m-emoji-marker .emoji-bubble {
-            width: 32px;
-            height: 32px;
-            border-radius: 999px;
-            background: rgba(15, 23, 42, 0.95);
-            color: #bbf7d0;
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
-            border: 2px solid rgba(15, 23, 42, 1);
-            transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
-        }
+    /* ==== EMOJI MARKERS ==== */
+    .s4m-emoji-marker {
+      width: 32px;
+      height: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-        .s4m-emoji-marker .pin-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 999px;
-            margin-top: 2px;
-            /*background: #22c55e;*/
-            background: #22d3ee;
-            /*box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);*/
-            box-shadow: 0 0 12px rgba(34, 211, 238, 0.9);
-            border: 0.5px solid #0f172a;  /* subtle dark ring so it stands out on light areas opt: 1.0px border*/
-        }
+    .s4m-emoji-marker .emoji-bubble {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.95);
+      color: #bbf7d0;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+      border: 2px solid rgba(15, 23, 42, 1);
+      transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+    }
 
-        .s4m-emoji-marker:hover .emoji-bubble {
-            transform: translateY(-2px) scale(1.05);
-            filter: brightness(1.1);
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
-        }
+    .s4m-emoji-marker .pin-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      margin-top: 2px;
+      background: #22d3ee;                          /* cyan accent */
+      box-shadow: 0 0 12px rgba(34, 211, 238, 0.9);
+      border: 1px solid #0f172a;                    /* dark ring */
+    }
 
-        /* Flicker animation (triggered by clicking top bar) */
-        @keyframes markerFlicker {
+    .s4m-emoji-marker:hover .emoji-bubble {
+      transform: translateY(-2px) scale(1.05);
+      filter: brightness(1.1);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.6);
+    }
 
-            0%,
-            100% {
-                transform: scale(1);
-                filter: brightness(1);
-            }
+    /* Flicker animation */
+    @keyframes markerFlicker {
+      0%, 100% { transform: scale(1); filter: brightness(1); }
+      25% { transform: scale(1.08); filter: brightness(1.6); }
+      50% { transform: scale(1); filter: brightness(1); }
+      75% { transform: scale(1.08); filter: brightness(1.6); }
+    }
 
-            25% {
-                transform: scale(1.08);
-                filter: brightness(1.6);
-            }
+    .s4m-emoji-marker.flicker .emoji-bubble,
+    .s4m-emoji-marker.flicker .pin-dot {
+      animation: markerFlicker 1s ease-in-out 1;
+    }
 
-            50% {
-                transform: scale(1);
-                filter: brightness(1);
-            }
-
-            75% {
-                transform: scale(1.08);
-                filter: brightness(1.6);
-            }
-        }
-
-        .s4m-emoji-marker.flicker .emoji-bubble,
-        .s4m-emoji-marker.flicker .pin-dot {
-            animation: markerFlicker 1s ease-in-out 1;
-        }
-
-        @media (min-width: 768px) {
-            .title {
-                font-size: 1.05rem;
-            }
-
-            .header-inner {
-                flex-direction: row;
-                align-items: center;
-                gap: 0.6rem;
-            }
-        }
-    </style>
+    @media (min-width: 768px) {
+      .title { font-size: 1.05rem; }
+      .header-inner { flex-direction: row; align-items: center; gap: 0.6rem; }
+    }
+  </style>
 </head>
-
 <body>
-    <div class="app">
-        <!-- Top bar (click to flicker all pins) -->
-        <div class="header">
-            <div class="header-inner" id="topbar">
-                <div class="title">Sustain4METU</div>
-                <div class="subtitle">Interactive green ideas map – tap a pin 🌱</div>
-            </div>
-        </div>
+<div class="app">
+  <!-- Top bar (click to flicker all pins) -->
+  <div class="header">
+    <div class="header-inner" id="topbar">
+      <div class="title">Sustain4METU</div>
+      <div class="subtitle">Interactive green ideas map – tap a pin 🌱</div>
+    </div>
+  </div>
 
-        <!-- Map -->
-        <div class="map-container" id="mapContainer">
-            <div id="map"></div>
-        </div>
+  <!-- Map -->
+  <div class="map-container" id="mapContainer">
+    <div id="map"></div>
+  </div>
 
-        <!-- Backdrop + bottom sheet -->
-        <div class="sheet-backdrop" id="sheetBackdrop"></div>
+  <!-- Backdrop + bottom sheet -->
+  <div class="sheet-backdrop" id="sheetBackdrop"></div>
 
-        <div class="sheet" id="sheet">
-            <div class="sheet-handle"></div>
-            <div class="sheet-header">
-                <div class="sheet-title" id="sheetTitle">Title</div>
-                <div class="sheet-tag" id="sheetTag">Idea</div>
-                <button class="sheet-close" id="sheetClose" aria-label="Close">×</button>
-            </div>
-
-            <div class="sheet-body">
-                <div class="sheet-image-wrapper" id="sheetImageWrapper">
-                    <img id="sheetImage" src="" alt="Idea visual" />
-                </div>
-                <div class="sheet-text" id="sheetContent"></div>
-                <div class="sheet-meta" id="sheetMeta"></div>
-                <div class="sheet-badges" id="sheetBadges"></div>
-            </div>
-        </div>
+  <div class="sheet" id="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <div class="sheet-title" id="sheetTitle">Title</div>
+      <div class="sheet-tag" id="sheetTag">Idea</div>
+      <button class="sheet-close" id="sheetClose" aria-label="Close">×</button>
     </div>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <div class="sheet-body">
+      <div class="sheet-image-wrapper" id="sheetImageWrapper">
+        <img id="sheetImage" src="" alt="Idea visual" />
+      </div>
+      <div class="sheet-text" id="sheetContent"></div>
+      <div class="sheet-meta" id="sheetMeta"></div>
+      <div class="sheet-badges" id="sheetBadges"></div>
+    </div>
+  </div>
+</div>
 
-    <script>
-        /* ====== 1) DATA: your ideas ====== */
-        const ideas = {
-            library: {
-                title: "Solar-Powered Library & Green Roof",
-                tag: "Energy & Buildings",
-                image: "images/library_roof.png",
-                content: [
-                    "Install solar panels on the main library roof to power lighting and study sockets.",
-                    "Create a rooftop garden with native plants to reduce heat and offer a quiet study corner.",
-                    "Place an interactive screen inside the library showing real-time energy production and CO₂ savings."
-                ],
-                meta: "Impact: Visible flagship project, strong educational value, CO₂ reduction.",
-                badges: ["Solar", "Visibility", "Student Space"],
-                emoji: "📚"
-            },
-            dorms: {
-                title: "Dorm Energy & Water Challenge",
-                tag: "Student Life",
-                image: "images/dorm_challenge.png",
-                content: [
-                    "Launch a friendly competition between dorms for electricity and water savings.",
-                    "Show weekly rankings on screens in each dorm + on Sustain4METU.",
-                    "Reward the winning dorm with tree-planting in its name or experience-based prizes."
-                ],
-                meta: "Impact: Behavior change at scale with very low cost.",
-                badges: ["Gamification", "Low Cost", "Behavior Change"],
-                emoji: "🛏️"
-            },
-            cafeteria: {
-                title: "Low-Waste Cafeteria & Refill Stations",
-                tag: "Food & Waste",
-                image: "images/cafeteria_zero_waste.png",
-                content: [
-                    "Introduce clearly marked recycling and organic waste separation points in cafeterias.",
-                    "Offer a discount system for reusable cups/containers and add water refill stations instead of single-use bottles.",
-                    "Pilot a weekly 'Low-Carbon Menu' day with short explanations of its climate impact."
-                ],
-                meta: "Impact: Daily touchpoint for thousands of students; big awareness + waste reduction.",
-                badges: ["Zero Waste", "Food", "Awareness"],
-                emoji: "🍽️"
-            }
-        };
+<!-- Leaflet JS -->
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
 
-        /* ====== 2) Bottom sheet logic ====== */
-        const mapContainer = document.getElementById("mapContainer");
-        const sheet = document.getElementById("sheet");
-        const sheetBackdrop = document.getElementById("sheetBackdrop");
-        const sheetTitle = document.getElementById("sheetTitle");
-        const sheetTag = document.getElementById("sheetTag");
-        const sheetContent = document.getElementById("sheetContent");
-        const sheetMeta = document.getElementById("sheetMeta");
-        const sheetBadges = document.getElementById("sheetBadges");
-        const sheetClose = document.getElementById("sheetClose");
-        const sheetImageWrapper = document.getElementById("sheetImageWrapper");
-        const sheetImage = document.getElementById("sheetImage");
-        const topbar = document.getElementById("topbar");
+<script>
+  /* ====== 1) DATA: your ideas ====== */
+  const ideas = {
+    library: {
+      title: "Solar-Powered Library & Green Roof",
+      tag: "Energy & Buildings",
+      image: "images/library_roof.png",
+      content: [
+        "Install solar panels on the main library roof to power lighting and study sockets.",
+        "Create a rooftop garden with native plants to reduce heat and offer a quiet study corner.",
+        "Place an interactive screen inside the library showing real-time energy production and CO₂ savings."
+      ],
+      meta: "Impact: Visible flagship project, strong educational value, CO₂ reduction.",
+      badges: ["Solar", "Visibility", "Student Space"],
+      emoji: "📚"
+    },
+    dorms: {
+      title: "Dorm Energy & Water Challenge",
+      tag: "Student Life",
+      image: "images/dorm_challenge.png",
+      content: [
+        "Launch a friendly competition between dorms for electricity and water savings.",
+        "Show weekly rankings on screens in each dorm + on Sustain4METU.",
+        "Reward the winning dorm with tree-planting in its name or experience-based prizes."
+      ],
+      meta: "Impact: Behavior change at scale with very low cost.",
+      badges: ["Gamification", "Low Cost", "Behavior Change"],
+      emoji: "🛏️"
+    },
+    cafeteria: {
+      title: "Low-Waste Cafeteria & Refill Stations",
+      tag: "Food & Waste",
+      image: "images/cafeteria_zero_waste.png",
+      content: [
+        "Introduce clearly marked recycling and organic waste separation points in cafeterias.",
+        "Offer a discount system for reusable cups/containers and add water refill stations instead of single-use bottles.",
+        "Pilot a weekly 'Low-Carbon Menu' day with short explanations of its climate impact."
+      ],
+      meta: "Impact: Daily touchpoint for thousands of students; big awareness + waste reduction.",
+      badges: ["Zero Waste", "Food", "Awareness"],
+      emoji: "🍽️"
+    }
+  };
 
-        function openSheet(ideaId) {
-            const idea = ideas[ideaId];
-            if (!idea) return;
+  /* ====== 2) Element refs ====== */
+  const mapContainer = document.getElementById("mapContainer");
+  const sheet = document.getElementById("sheet");
+  const sheetBackdrop = document.getElementById("sheetBackdrop");
+  const sheetTitle = document.getElementById("sheetTitle");
+  const sheetTag = document.getElementById("sheetTag");
+  const sheetContent = document.getElementById("sheetContent");
+  const sheetMeta = document.getElementById("sheetMeta");
+  const sheetBadges = document.getElementById("sheetBadges");
+  const sheetClose = document.getElementById("sheetClose");
+  const sheetImageWrapper = document.getElementById("sheetImageWrapper");
+  const sheetImage = document.getElementById("sheetImage");
+  const sheetHandle = document.querySelector(".sheet-handle");
+  const sheetHeader = document.querySelector(".sheet-header");
+  const topbar = document.getElementById("topbar");
 
-            sheetTitle.textContent = idea.title;
-            sheetTag.textContent = idea.tag || "Idea";
+  // Hide image wrapper if image fails to load
+  sheetImage.addEventListener("error", () => {
+    sheetImageWrapper.style.display = "none";
+  });
 
-            if (idea.image) {
-                sheetImage.src = idea.image;
-                sheetImageWrapper.style.display = "block";
-            } else {
-                sheetImageWrapper.style.display = "none";
-                sheetImage.src = "";
-            }
+  /* ====== 3) Sheet open/close ====== */
+  function openSheet(ideaId) {
+    const idea = ideas[ideaId];
+    if (!idea) return;
 
-            sheetContent.innerHTML = "";
-            (idea.content || []).forEach(p => {
-                const el = document.createElement("p");
-                el.textContent = p;
-                sheetContent.appendChild(el);
-            });
+    sheetTitle.textContent = idea.title;
+    sheetTag.textContent = idea.tag || "Idea";
 
-            sheetMeta.textContent = idea.meta || "";
+    if (idea.image) {
+      sheetImage.src = idea.image;
+      sheetImageWrapper.style.display = "block";
+    } else {
+      sheetImageWrapper.style.display = "none";
+      sheetImage.src = "";
+    }
 
-            sheetBadges.innerHTML = "";
-            (idea.badges || []).forEach(b => {
-                const span = document.createElement("span");
-                span.className = "sheet-badge";
-                span.textContent = b;
-                sheetBadges.appendChild(span);
-            });
+    sheetContent.innerHTML = "";
+    (idea.content || []).forEach(p => {
+      const el = document.createElement("p");
+      el.textContent = p;
+      sheetContent.appendChild(el);
+    });
 
-            sheet.classList.add("visible");
-            sheetBackdrop.classList.add("visible");
-            mapContainer.classList.add("zoomed");
-        }
+    sheetMeta.textContent = idea.meta || "";
 
-        function closeSheet() {
-            sheet.classList.remove("visible");
-            sheetBackdrop.classList.remove("visible");
-            mapContainer.classList.remove("zoomed");
-        }
+    sheetBadges.innerHTML = "";
+    (idea.badges || []).forEach(b => {
+      const span = document.createElement("span");
+      span.className = "sheet-badge";
+      span.textContent = b;
+      sheetBadges.appendChild(span);
+    });
 
-        sheetClose.addEventListener("click", closeSheet);
-        sheetBackdrop.addEventListener("click", closeSheet);
-        document.addEventListener("keydown", e => { if (e.key === "Escape") closeSheet(); });
+    // reset to peek state on every open
+    sheet.classList.remove("expanded");
+    sheet.classList.add("visible");
+    sheetBackdrop.classList.add("visible");
+    mapContainer.classList.add("zoomed");
+  }
 
-        /* ====== 3) Map init (METU) ====== */
-        const metuCenter = [39.8905, 32.7800];
-        const map = L.map("map", {
-            center: metuCenter,
-            zoom: 15,
-            minZoom: 14,
-            maxZoom: 18,
-            zoomControl: false          // ❗ hide default top-left zoom control
-        });
+  function closeSheet() {
+    sheet.classList.remove("visible");
+    sheet.classList.remove("expanded");
+    sheetBackdrop.classList.remove("visible");
+    mapContainer.classList.remove("zoomed");
+  }
 
-        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-            maxZoom: 19,
-            attribution: "&copy; OpenStreetMap contributors"
-        }).addTo(map);
+  sheetClose.addEventListener("click", closeSheet);
+  sheetBackdrop.addEventListener("click", closeSheet);
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeSheet();
+  });
 
-        // add zoom control back at bottom-left
-        L.control.zoom({
-            position: "bottomleft"      // ❗ new position
-        }).addTo(map);
+  /* ====== 4) Drag-to-expand / close ====== */
+  let dragStartY = null;
 
+  function getY(evt) {
+    return evt.touches ? evt.touches[0].clientY : evt.clientY;
+  }
 
-        const bounds = L.latLngBounds([39.882, 32.765], [39.899, 32.795]);
-        map.setMaxBounds(bounds);
-        map.on("drag", () => map.panInsideBounds(bounds, { animate: false }));
+  function onDragStart(evt) {
+    dragStartY = getY(evt);
+  }
 
-        /* ====== 4) Emoji markers (black bubble + green dot) ====== */
-        const markers = [];  // keep refs for flicker
+  function onDragEnd(evt) {
+    if (dragStartY === null) return;
+    const endY = getY(evt);
+    const delta = dragStartY - endY;  // positive = moved up
 
-        function emojiIcon(emojiChar) {
-            return L.divIcon({
-                className: "s4m-emoji-marker",
-                html: `
+    const THRESHOLD = 30; // px
+
+    if (delta > THRESHOLD) {
+      // drag up -> expand
+      sheet.classList.add("expanded");
+    } else if (delta < -THRESHOLD) {
+      // drag down -> close
+      closeSheet();
+    }
+
+    dragStartY = null;
+  }
+
+  [sheetHandle, sheetHeader].forEach(el => {
+    el.addEventListener("touchstart", onDragStart);
+    el.addEventListener("touchend", onDragEnd);
+    el.addEventListener("mousedown", onDragStart);
+    el.addEventListener("mouseup", onDragEnd);
+  });
+
+  /* ====== 5) Map init ====== */
+  const metuCenter = [39.8905, 32.7800];
+
+  const map = L.map("map", {
+    center: metuCenter,
+    zoom: 15,
+    minZoom: 14,
+    maxZoom: 18,
+    zoomControl: false          // we'll add our own at bottom-left
+  });
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap contributors"
+  }).addTo(map);
+
+  // zoom control bottom-left
+  L.control.zoom({ position: "bottomleft" }).addTo(map);
+
+  // restrict to METU area
+  const bounds = L.latLngBounds(
+    [39.882, 32.765],
+    [39.899, 32.795]
+  );
+  map.setMaxBounds(bounds);
+  map.on("drag", () => {
+    map.panInsideBounds(bounds, { animate: false });
+  });
+
+  /* ====== 6) Emoji markers + flicker ====== */
+  const markers = [];
+
+  function emojiIcon(emojiChar) {
+    return L.divIcon({
+      className: "s4m-emoji-marker",
+      html: `
         <div class="emoji-bubble">${emojiChar || "📍"}</div>
         <div class="pin-dot"></div>
       `,
-                iconSize: [32, 40],
-                iconAnchor: [16, 36]   // point just above the green dot
-            });
-        }
+      iconSize: [32, 40],
+      iconAnchor: [16, 36]
+    });
+  }
 
-        function addIdeaMarker(lat, lng, ideaId) {
-            const emoji = ideas[ideaId]?.emoji || "📍";
-            const marker = L.marker([lat, lng], { icon: emojiIcon(emoji) }).addTo(map);
-            marker.on("click", () => openSheet(ideaId));
-            markers.push(marker);
-        }
+  function addIdeaMarker(lat, lng, ideaId) {
+    const emoji = ideas[ideaId]?.emoji || "📍";
+    const marker = L.marker([lat, lng], { icon: emojiIcon(emoji) }).addTo(map);
+    marker.on("click", () => openSheet(ideaId));
+    markers.push(marker);
+  }
 
-        // Add your pins
-        addIdeaMarker(39.8922, 32.7791, "library");
-        addIdeaMarker(39.8862, 32.7760, "dorms");
-        addIdeaMarker(39.8888, 32.7825, "cafeteria");
+  addIdeaMarker(39.8922, 32.7791, "library");
+  addIdeaMarker(39.8862, 32.7760, "dorms");
+  addIdeaMarker(39.8888, 32.7825, "cafeteria");
 
-        /* ====== 5) Top bar click -> flicker all pins ====== */
-        function flickerPins() {
-            markers.forEach(m => {
-                const el = m.getElement();                 // Leaflet marker DOM
-                if (!el) return;
-                el.classList.remove("flicker");            // restart animation if needed
-                void el.offsetWidth;                       // reflow
-                el.classList.add("flicker");
-            });
-            setTimeout(() => {
-                markers.forEach(m => {
-                    const el = m.getElement();
-                    if (el) el.classList.remove("flicker");
-                });
-            }, 1100);
-        }
-        topbar.addEventListener("click", flickerPins);
-    </script>
+  function flickerPins() {
+    markers.forEach(m => {
+      const el = m.getElement();
+      if (!el) return;
+      el.classList.remove("flicker");
+      void el.offsetWidth; // restart animation
+      el.classList.add("flicker");
+    });
+
+    setTimeout(() => {
+      markers.forEach(m => {
+        const el = m.getElement();
+        if (el) el.classList.remove("flicker");
+      });
+    }, 1100);
+  }
+
+  topbar.addEventListener("click", flickerPins);
+</script>
 </body>
-
 </html>
