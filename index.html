@@ -228,6 +228,14 @@
             padding-bottom: 0.2rem;
         }
 
+        .sheet-citation {
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: #4b5563;
+            font-style: italic;
+        }
+
+
         .sheet-badge {
             font-size: 0.7rem;
             padding: 0.2rem 0.55rem;
@@ -355,6 +363,7 @@
                 <div class="sheet-text" id="sheetContent"></div>
                 <div class="sheet-meta" id="sheetMeta"></div>
                 <div class="sheet-badges" id="sheetBadges"></div>
+                <div class="sheet-citation" id="sheetCitation"></div> <!-- NEW -->
             </div>
         </div>
     </div>
@@ -373,39 +382,224 @@
                 content: [
                     "Install solar panels on the main library roof to power lighting and study sockets.",
                     "Create a rooftop garden with native plants to reduce heat and offer a quiet study corner.",
-                    "Place an interactive screen inside the library showing real-time energy production and CO₂ savings."
+                    "Place an interactive screen inside the library showing real-time energy production and approximate CO₂ savings based on standard emission factors for grid electricity.",
+                    "Libraries are high-use, long-hour buildings, so even covering part of the roof with solar can offset a noticeable share of their lighting and plug-load consumption over the year."
                 ],
-                meta: "Impact: Visible flagship project, strong educational value, CO₂ reduction.",
+                meta: "Impact: visible flagship project, strong educational value, and direct CO₂ reduction from on-site renewable energy.",
                 badges: ["Solar", "Visibility", "Student Space"],
                 emoji: "📚"
             },
+
             dorms: {
                 title: "Dorm Energy & Water Challenge",
                 tag: "Student Life",
                 image: "images/dorm_challenge.png",
                 content: [
-                    "Launch a friendly competition between dorms for electricity and water savings.",
-                    "Show weekly rankings on screens in each dorm + on Sustain4METU.",
-                    "Reward the winning dorm with tree-planting in its name or experience-based prizes."
+                    "Launch a friendly competition between dorms for electricity and water savings, using monthly meter readings as the basis.",
+                    "Show weekly or monthly rankings on screens in each dorm and on Sustain4METU, so residents see how their dorm is performing in real time.",
+                    "Reward the winning dorm with tree-planting in its name, common-area improvements, or experience-based prizes instead of material gifts.",
+                    "Behaviour-change programs in universities often report energy savings in the 5–15% range when students receive regular feedback and light gamification, so even small shifts can add up quickly across many dorms."
                 ],
-                meta: "Impact: Behavior change at scale with very low cost.",
+                meta: "Impact: large-scale behaviour change with low cost, plus stronger community feeling around sustainability.",
                 badges: ["Gamification", "Low Cost", "Behavior Change"],
                 emoji: "🛏️"
             },
+
             cafeteria: {
                 title: "Low-Waste Cafeteria & Refill Stations",
                 tag: "Food & Waste",
                 image: "images/cafeteria_zero_waste.png",
                 content: [
-                    "Introduce clearly marked recycling and organic waste separation points in cafeterias.",
-                    "Offer a discount system for reusable cups/containers and add water refill stations instead of single-use bottles.",
-                    "Pilot a weekly 'Low-Carbon Menu' day with short explanations of its climate impact."
+                    "Introduce clearly marked recycling and organic waste separation points in cafeterias, with icons and colours instead of only text.",
+                    "Offer a discount system for reusable cups and food containers, and add water refill stations so students do not need single-use plastic bottles.",
+                    "Pilot a weekly 'Low-Carbon Menu' day with more plant-based options and a small note that compares their approximate climate impact to standard meals using typical life-cycle estimate ranges.",
+                    "University case studies show that simple nudges like reusable discounts and clear bins can significantly increase recycling rates and reduce food and packaging waste."
                 ],
-                meta: "Impact: Daily touchpoint for thousands of students; big awareness + waste reduction.",
+                meta: "Impact: lower waste and emissions in a place almost every student uses daily, plus built-in climate education.",
                 badges: ["Zero Waste", "Food", "Awareness"],
                 emoji: "🍽️"
+            },
+
+            compost_forest: {
+                title: "Compost from Campus Green Waste",
+                tag: "Waste & Soil",
+                image: "images/compost_forest.png",
+                content: [
+                    "Convert pruning waste, fallen leaves, and lawn-mowing residues from METU’s green areas into compost instead of sending them away as mixed waste.",
+                    "Set up a small composting area near forested zones: collected plant waste is shredded, piled, and regularly turned to produce nutrient-rich compost in a few months.",
+                    "Use the compost to nourish campus trees, flower beds, and new saplings – closing the loop on green waste generated on campus.",
+                    "Composting organic waste instead of landfilling it also avoids methane emissions, which climate science identifies as a much more powerful greenhouse gas than CO₂ on a per-molecule basis.",
+                    "Even if METU produced just 10 tons of green waste per year, that could turn into several tons of compost and avoid both disposal costs and extra emissions."
+                ],
+                meta: "Impact: waste reduction, healthier soils, and lower methane emissions from organic waste disposal.",
+                badges: ["Compost", "Circular Economy", "Soil Health"],
+                emoji: "🌳"
+            },
+
+            microalgae_bio: {
+                title: "Microalgae Photobioreactor at Biology",
+                tag: "Carbon & Air",
+                image: "images/microalgae_reactor.png",
+                content: [
+                    "Develop a panel-type microalgae photobioreactor near the Biology department, where algae are already part of the academic and research work.",
+                    "Microalgae can capture CO₂ very efficiently in a small footprint, turning light and CO₂ into biomass while releasing oxygen.",
+                    "The reactor can include a small info board explaining how algae photosynthesis works and showing approximate CO₂ captured daily using standard assumptions from microalgae literature (e.g., microalgae can fix several times more CO₂ per unit area than many terrestrial plants) (Klinthong et al., 2015).",
+                    "Reviews of microalgal systems indicate they can fix several times more CO₂ per unit area than many terrestrial plants, making them ideal for tight campus locations (Ashour et al., 2024).",
+                    "The system could be used in lab courses or student projects, integrating sustainability directly into teaching and not just as a decorative installation."
+                ],
+                meta: "Impact: visible science-based climate solution; reduced CO₂, increased O₂, and air-quality awareness around the department.",
+                badges: ["Microalgae", "Carbon Capture", "STEM Education"],
+                emoji: "🧪",
+                citation: "Klinthong, W., & al. (2015). Microalgae and Their Applications in CO2 Capture and Utilization. Aerosol and Air Quality Research, 15, 712-742. & Ashour, M. (2024). Usage of Chlorella and diverse microalgae for CO2 capture. Frontiers in Plant Science."
+            },
+
+            battery_boxes: {
+                title: "Battery Waste Collection Points",
+                tag: "Recycling & Hazardous Waste",
+                image: "images/battery_collection_box.png",
+                content: [
+                    "Place battery waste collection boxes in strategic locations: libraries, cafeterias, dorm lobbies, and main faculty buildings.",
+                    "Used batteries contain heavy metals and chemicals; if thrown into regular trash, they can leak into soil and water and also increase fire risk in mixed waste streams.",
+                    "Collected batteries can be periodically sent to authorized recycling facilities, in line with national hazardous waste regulations.",
+                    "Clear signage in Turkish and English can explain what can be thrown inside and why separate battery collection matters for human health and ecosystems.",
+                    "Environmental studies on spent batteries consistently show that improper disposal leads to contamination of soil, water, and air with toxic metals, so each full collection box represents a direct risk avoided."
+                ],
+                meta: "Impact: prevention of soil and water pollution, safer waste streams, and better recycling habits across campus.",
+                badges: ["Battery Recycling", "Hazardous Waste", "Awareness"],
+                emoji: "🔋"
+            },
+
+            electric_shuttle: {
+                title: "Electric Campus Shuttle System",
+                tag: "Transport & Mobility",
+                image: "images/electric_shuttle_bus.png",
+                content: [
+                    "Gradually convert the current diesel shuttle buses on METU campus into an all-electric shuttle system.",
+                    "Electric buses reduce tailpipe emissions to zero on campus, which means cleaner air, less particulate matter, and a quieter environment for pedestrians and cyclists.",
+                    "Real-world measurements of conventional diesel buses show CO₂ emissions on the order of hundreds of grams per kilometer; even a single busy line that runs around 50,000 km per year could avoid tens of tons of CO₂ annually when electrified and supplied by a relatively low-carbon grid.",
+                    "Charging stations can be placed at shuttle depots and major stops for opportunity charging, supported by rooftop solar on depots and parking structures where possible.",
+                    "Route maps and stops can include a note: “You are currently riding an electric shuttle – estimated annual CO₂ avoided: ___ tons,” making the climate benefit visible instead of invisible."
+                ],
+                meta: "Impact: reduced air pollution and noise, lower CO₂ emissions, and a more comfortable campus for people walking and cycling.",
+                badges: ["Electric Vehicles", "Air Quality", "Quiet Campus"],
+                emoji: "🚌"
+            },
+
+            rainwater_system: {
+                title: "Rainwater Collection for Toilets & Irrigation",
+                tag: "Water & Resilience",
+                image: "images/rainwater_roof_tank.png",
+                content: [
+                    "Install rainwater collection systems on large-roof buildings like faculties, the library, or sports halls.",
+                    "Rainwater from roofs is filtered and stored in tanks, then used for toilet flushing or irrigation of green areas instead of treated drinking water.",
+                    "A common engineering rule-of-thumb is: collected rainwater (litres) ≈ roof area (m²) × annual rainfall (mm) × 0.8–0.9, depending on system losses.",
+                    "If a 1,000 m² roof in Ankara receives roughly 400 mm of rain annually, it could harvest on the order of 300,000–360,000 litres of water per year, enough for a significant share of toilet flushing or irrigation for that building.",
+                    "The system can be monitored so students can see how many litres of rainwater have been reused and how much treated mains water has been saved over the year."
+                ],
+                meta: "Impact: reduced potable water consumption, lower water bills, and improved resilience to drought and climate change.",
+                badges: ["Water Saving", "Infrastructure", "Climate Adaptation"],
+                emoji: "💧"
+            },
+
+            kindergarten_garden: {
+                title: "Rainwater & Mini-Garden at METU Kindergarten",
+                tag: "Education & Kids",
+                image: "images/kindergarten_rain_garden.png",
+                content: [
+                    "Create a small rainwater collection system specifically for METU kindergarten, connected to a mini vegetable or flower garden.",
+                    "Children can collect rainwater in a tank or barrels and use it to water their own small garden plot, learning about the water cycle, seasons, and sustainability in a playful way.",
+                    "They can grow simple crops (lettuce, herbs, or flowers) and see how natural resources are reused instead of wasted.",
+                    "Teachers can integrate simple observations into class: measuring rainfall in a gauge, counting how many watering cans come from a full barrel, or drawing the water cycle together.",
+                    "This early recycling and sustainability education helps children build lifelong habits of environmental responsibility and shows visiting parents that METU takes climate education seriously."
+                ],
+                meta: "Impact: early sustainability education, hands-on learning, and a visible symbol of green values on campus.",
+                badges: ["Kids", "Rainwater", "Environmental Education"],
+                emoji: "🌱"
+            },
+
+            motion_sensors: {
+                title: "Motion Sensor Lighting in Campus Buildings",
+                tag: "Energy Efficiency",
+                image: "images/motion_sensor_lighting.png",
+                content: [
+                    "Install motion sensor lights in restrooms, corridors, storage rooms, and other low-occupancy areas across faculties and administrative buildings.",
+                    "Lights turn on only when someone is present and switch off automatically after a short period of inactivity, eliminating unnecessary electricity use when spaces are empty.",
+                    "If a corridor’s lights are currently left on 24/7, motion sensors can cut lighting energy use dramatically, especially during nights, weekends, and semester breaks.",
+                    "Studies on occupancy-based lighting controls in offices and corridors report average lighting energy savings in the range of roughly 20-60% (de Bakker & Long, 2017).",
+                    "Sensors can be combined with LED bulbs and daylight sensors to maximize savings, and reduce both electricity bills and maintenance costs over time."
+                ],
+                meta: "Impact: lower electricity consumption, reduced carbon emissions from campus energy use, and smarter building operation.",
+                badges: ["Energy Saving", "Smart Campus", "Automation"],
+                emoji: "💡",
+                citation: "de Bakker, C., & Long, N. (2017). The Energy Saving Potential of Occupancy-Based Lighting Control Strategies. Energies, 11(1), 2."
+            },
+
+            solar_chargers: {
+                title: "Solar-Powered Charging Stations",
+                tag: "Energy & Student Life",
+                image: "images/solar_charging_station.png",
+                content: [
+                    "Develop solar-powered charging stations near the library, dorm areas, and student gathering spots so students can charge phones and laptops using clean energy.",
+                    "Growing use of mobile phones, tablets, and laptops in libraries and study spaces creates high demand for plugs; solar stations take some of this load off the main grid.",
+                    "Even a modest solar array can generate enough electricity over a year to charge thousands of phones or hundreds of laptop cycles, using typical phone/laptop battery sizes for rough calculations.",
+                    "Stations can display how many watt-hours they have produced in a day and how much CO₂ has been avoided compared to conventional electricity, using simple approximate emission factors.",
+                    "Smaller solar modules can also be installed near the kindergarten garden so kids see that their devices and pumps can be powered directly by the sun."
+                ],
+                meta: "Impact: decreased campus electricity usage, lower carbon footprint, and improved access to sustainable charging for students.",
+                badges: ["Solar", "Student-Friendly", "Resilient Energy"],
+                emoji: "🔌"
+            },
+
+            bike_infra: {
+                title: "Bike Lanes & Repair Stations",
+                tag: "Transport & Health",
+                image: "images/bike_infrastructure.png",
+                content: [
+                    "Design safer bike lanes and clear wayfinding for cycling routes between dorms, main faculties, the library, and major gates of METU.",
+                    "Add covered, secure bike parking near building entrances instead of leaving bikes randomly on railings and stairs.",
+                    "Install simple bike repair stations with pumps and basic tools at a few key intersections so students can fix flat tires or adjust brakes on the go.",
+                    "Every short trip shifted from car or shuttle to bicycle avoids local tailpipe emissions, reduces congestion, and improves student health through daily movement.",
+                    "Campus transport studies in many universities show that good cycling infrastructure plus safe parking can significantly increase the share of trips made by bike rather than by car."
+                ],
+                meta: "Impact: lower transport emissions, healthier students, and a campus that feels comfortable at human speed instead of car speed.",
+                badges: ["Cycling", "Active Mobility", "Low Carbon"],
+                emoji: "🚲",
+                citation: "Naseri, H., & al. (2025). Cycling and GHG Emissions: How Infrastructure Makes All the Difference. Sustainability, 17(17), 7577. & Taştan, H., & Doğruer, S. M. (2025). Developing Awareness about the Role of Cycling Infrastructure in Sustainability: Experiences from Architectural Design Studio. Journal of Design Studio, 7(1), 237-242."
+            },
+
+            native_plants: {
+                title: "Native, Low-Water Landscaping",
+                tag: "Biodiversity & Water",
+                image: "images/native_plants_garden.png",
+                content: [
+                    "Gradually replace some high-maintenance lawns with native plant beds that need less irrigation and support local biodiversity.",
+                    "Native species are better adapted to local climate and rainfall patterns, reducing the need for chemical fertilizers and frequent watering.",
+                    "Signs can explain which species are native or pollinator-friendly and why they were chosen, turning everyday pathways into small open-air ecology lessons.",
+                    "Combined with rainwater harvesting and mulching, native plantings can significantly reduce landscape water demand and maintenance time for campus staff.",
+                    "Research on xeriscaping and native landscaping in dry or semi-dry climates reports noticeable reductions in irrigation needs compared to traditional lawns."
+                ],
+                meta: "Impact: more resilient green spaces, higher biodiversity, and reduced irrigation and maintenance costs.",
+                badges: ["Biodiversity", "Water Saving", "Landscape"],
+                emoji: "🦋"
+            },
+
+            digital_campus: {
+                title: "Digital-First, Low-Paper Campus",
+                tag: "Resources & IT",
+                image: "images/digital_campus_low_paper.png",
+                content: [
+                    "Promote a digital-first approach for assignments, reports, and internal documents to drastically cut paper consumption across METU.",
+                    "Set default printer settings to double-sided and black-and-white in libraries and computer labs, with a gentle message reminding users of the environmental impact of printing.",
+                    "Encourage the use of learning management systems for submissions and feedback, and centralize important forms online instead of printed copies at multiple offices.",
+                    "If a typical student currently uses hundreds of sheets per semester, even a 30–50% reduction across thousands of students would mean tens of thousands fewer pages printed each term, equivalent to many trees’ worth of fibre and ink savings.",
+                    "Public dashboards can show approximate paper savings, equivalent number of trees spared, and reduced waste compared to a baseline year before the digital-first initiative."
+                ],
+                meta: "Impact: lower paper use, reduced printing costs, and a more modern, efficient academic workflow.",
+                badges: ["Paper Saving", "IT Systems", "Behaviour Change"],
+                emoji: "🖨️"
             }
         };
+
 
         /* ====== 2) Element refs ====== */
         const mapContainer = document.getElementById("mapContainer");
@@ -416,6 +610,7 @@
         const sheetContent = document.getElementById("sheetContent");
         const sheetMeta = document.getElementById("sheetMeta");
         const sheetBadges = document.getElementById("sheetBadges");
+        const sheetCitation = document.getElementById("sheetCitation"); // <!-- NEW -->
         const sheetClose = document.getElementById("sheetClose");
         const sheetImageWrapper = document.getElementById("sheetImageWrapper");
         const sheetImage = document.getElementById("sheetImage");
@@ -460,6 +655,15 @@
                 span.textContent = b;
                 sheetBadges.appendChild(span);
             });
+
+            // Citation (APA) if provided
+            if (idea.citation) {
+                sheetCitation.textContent = "Source: " + idea.citation;
+                sheetCitation.style.display = "block";
+            } else {
+                sheetCitation.textContent = "";
+                sheetCitation.style.display = "none";
+            }
 
             // reset to peek state on every open
             sheet.classList.remove("expanded");
@@ -587,9 +791,26 @@
             markers.push(marker);
         }
 
-        addIdeaMarker(39.8922, 32.7791, "library");
-        addIdeaMarker(39.8862, 32.7760, "dorms");
-        addIdeaMarker(39.8888, 32.7825, "cafeteria");
+        // Core ideas
+        addIdeaMarker(39.8922, 32.7791, "library");            // Library solar & green roof
+        addIdeaMarker(39.8862, 32.7760, "dorms");              // Dorm energy & water challenge
+        addIdeaMarker(39.8888, 32.7825, "cafeteria");          // Low-waste cafeteria & refill
+
+        // Friend ideas
+        addIdeaMarker(39.8950, 32.7765, "compost_forest");     // Compost from campus green waste
+        addIdeaMarker(39.8900, 32.7850, "microalgae_bio");     // Microalgae photobioreactor
+        addIdeaMarker(39.8890, 32.7790, "battery_boxes");      // Battery waste collection boxes
+        addIdeaMarker(39.8870, 32.7720, "electric_shuttle");   // Electric campus shuttle system
+        addIdeaMarker(39.8915, 32.7820, "rainwater_system");   // Rainwater for toilets & irrigation
+        addIdeaMarker(39.8840, 32.7790, "kindergarten_garden");// Kindergarten rainwater mini-garden
+        addIdeaMarker(39.8895, 32.7810, "motion_sensors");     // Motion sensor lighting in buildings
+        addIdeaMarker(39.8910, 32.7780, "solar_chargers");     // Solar-powered charging stations
+
+        // Extra ideas
+        addIdeaMarker(39.8935, 32.7780, "bike_infra");         // Bike lanes & repair stations
+        addIdeaMarker(39.8960, 32.7830, "native_plants");      // Native low-water landscaping
+        addIdeaMarker(39.8898, 32.7835, "digital_campus");     // Digital-first low-paper campus
+
 
         function flickerPins() {
             markers.forEach(m => {
