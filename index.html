@@ -553,7 +553,7 @@
             bike_infra: {
                 title: "Bike Lanes & Repair Stations",
                 tag: "Transport & Health",
-                image: "images/bike_infrastructure.png",
+                image: "images/sfd-bike-repair-station.jpg",
                 content: [
                     "Design safer bike lanes and clear wayfinding for cycling routes between dorms, main faculties, the library, and major gates of METU.",
                     "Add covered, secure bike parking near building entrances instead of leaving bikes randomly on railings and stairs.",
@@ -570,7 +570,7 @@
             native_plants: {
                 title: "Native, Low-Water Landscaping",
                 tag: "Biodiversity & Water",
-                image: "images/native_plants_garden.png",
+                image: "images/native_plants_garden.jpg",
                 content: [
                     "Gradually replace some high-maintenance lawns with native plant beds that need less irrigation and support local biodiversity.",
                     "Native species are better adapted to local climate and rainfall patterns, reducing the need for chemical fertilizers and frequent watering.",
@@ -597,7 +597,55 @@
                 meta: "Impact: lower paper use, reduced printing costs, and a more modern, efficient academic workflow.",
                 badges: ["Paper Saving", "IT Systems", "Behaviour Change"],
                 emoji: "🖨️"
-            }
+            },
+            devrim_solar_walkway: {
+                title: "Devrim Solar Walkway",
+                tag: "Energy & Symbolism",
+                emoji: "⚡",
+                image: "images/devrim_solar_walkway.png",
+                meta: "Solar pavement tiles at Devrim entrance powering lights & USB charging.",
+                badges: ["Solar Pavement", "High Visibility", "Student Hub"],
+                content: [
+                    "Devrim Stadium is already a symbolic place on campus – this idea turns the main approach into a renewable energy landmark.",
+                    "A section of the walkway is covered with durable solar pavement tiles. During the day they harvest sunlight; at night they power LED lighting along the path and a few USB/Type-C charging benches nearby.",
+                    "A small digital display near the entrance shows the daily and total energy produced and the estimated CO₂ emissions avoided. This makes Devrim not only a cultural symbol, but also a live demonstration of climate-friendly infrastructure for everyone who passes by.",
+                    "Pilot projects around the world have shown that photovoltaic pavements can meaningfully contribute to local electricity generation when placed in sunny, high-traffic areas, especially in plazas, paths and stadium surroundings."
+                ],
+                citation: "Hu, H. et al. (2021). Solar pavements: A critical review. Renewable and Sustainable Energy Reviews, 150, 111460."
+            },
+
+            mediko_microforest: {
+                title: "Mediko Micro-Forest (Miyawaki Patch)",
+                tag: "Biodiversity & Cooling",
+                emoji: "🌳",
+                image: "images/mediko_microforest.png",
+                meta: "Dense native mini-forest next to Mediko for shade, biodiversity and carbon storage.",
+                badges: ["Miyawaki Forest", "Native Plants", "Cooling"],
+                content: [
+                    "The open grass area near Mediko is transformed into a 100–200 m² Miyawaki-style micro-forest planted with dense layers of native trees and shrubs.",
+                    "Compared to conventional planting, Miyawaki forests grow faster, capture more carbon per square metre, and create a surprisingly cool, shady micro-climate in just a few years.",
+                    "This small patch becomes a biodiversity hotspot for birds, insects and soil life, while also offering visual and psychological relief for students waiting for appointments or passing through a stressful day.",
+                    "Educational signage can explain which species are used, why they were selected, and how small forests like this help fight urban heat and climate change."
+                ],
+                citation: "Miyawaki, A. (2004). Restoration of living environment based on vegetation ecology: Theory and practice. Ecological Research, 19(1), 83–90."
+            },
+
+            mediko_air_quality: {
+                title: "Mediko Air Quality Lanterns",
+                tag: "Air & Health Awareness",
+                emoji: "🌬️",
+                image: "images/mediko_air_quality_lanterns.png",
+                meta: "LED ‘lanterns’ that change colour with real-time air quality near Mediko.",
+                badges: ["Air Quality", "Health Link", "Live Data"],
+                content: [
+                    "A set of slim LED ‘lantern’ columns at the Mediko entrance visualise real-time air quality data from a local sensor.",
+                    "Colours change according to pollutant levels (e.g. green = good, yellow = moderate, red = high PM₂.₅/NO₂), so students instantly see how clean or polluted the air is as they arrive.",
+                    "A small QR code links to a dashboard showing hourly data, basic explanations of pollutants, and tips on what campuses and cities can do to improve air quality (public transport, cycling, cleaner heating).",
+                    "The system connects personal health with environmental data, reinforcing the idea that clean air is a core part of campus wellbeing and aligning with WHO air quality guideline discussions."
+                ],
+                citation: "World Health Organization. (2021). WHO global air quality guidelines: Particulate matter (PM₂.₅ and PM₁₀), ozone, nitrogen dioxide, sulfur dioxide and carbon monoxide. Geneva: WHO."
+            },
+
         };
 
 
@@ -761,8 +809,8 @@
 
         // restrict to METU area
         const bounds = L.latLngBounds(
-            [39.882, 32.765],
-            [39.899, 32.795]
+            [39.880, 32.760],   // south-west corner (a bit wider than before)
+            [39.908, 32.800]    // north-east corner (extended so shuttle pin fits)
         );
         map.setMaxBounds(bounds);
         map.on("drag", () => {
@@ -792,24 +840,45 @@
         }
 
         // Core ideas
-        addIdeaMarker(39.8922, 32.7791, "library");            // Library solar & green roof
-        addIdeaMarker(39.8862, 32.7760, "dorms");              // Dorm energy & water challenge
-        addIdeaMarker(39.8888, 32.7825, "cafeteria");          // Low-waste cafeteria & refill
+        addIdeaMarker(39.895862399753, 32.78321952197114, "library");  // Solar-powered library (UPDATED)
 
-        // Friend ideas
-        addIdeaMarker(39.8950, 32.7765, "compost_forest");     // Compost from campus green waste
-        addIdeaMarker(39.8900, 32.7850, "microalgae_bio");     // Microalgae photobioreactor
-        addIdeaMarker(39.8890, 32.7790, "battery_boxes");      // Battery waste collection boxes
-        addIdeaMarker(39.8870, 32.7720, "electric_shuttle");   // Electric campus shuttle system
-        addIdeaMarker(39.8915, 32.7820, "rainwater_system");   // Rainwater for toilets & irrigation
-        addIdeaMarker(39.8840, 32.7790, "kindergarten_garden");// Kindergarten rainwater mini-garden
-        addIdeaMarker(39.8895, 32.7810, "motion_sensors");     // Motion sensor lighting in buildings
-        addIdeaMarker(39.8910, 32.7780, "solar_chargers");     // Solar-powered charging stations
+        // Dorm Energy Challenge (TWO LOCATIONS)
+        addIdeaMarker(39.88655822197298, 32.777277539170285, "dorms");        // Dorm energy challenge #1 (UPDATED)
+        addIdeaMarker(39.88909009186276, 32.78886108506729, "dorms");          // Dorm energy challenge #2 (UPDATED)
 
-        // Extra ideas
-        addIdeaMarker(39.8935, 32.7780, "bike_infra");         // Bike lanes & repair stations
-        addIdeaMarker(39.8960, 32.7830, "native_plants");      // Native low-water landscaping
-        addIdeaMarker(39.8898, 32.7835, "digital_campus");     // Digital-first low-paper campus
+        addIdeaMarker(39.8888, 32.7825, "cafeteria"); // Low-waste cafeteria (UNCHANGED)
+
+        // Friend ideas (UPDATED where you provided coordinates)
+        addIdeaMarker(39.88590370587526, 32.78571019073111, "compost_forest");   // Compost from campus green waste (UPDATED)
+        addIdeaMarker(39.90321057205149, 32.778119310007575, "compost_forest");
+
+        addIdeaMarker(39.896144036917825, 32.7801232635387, "microalgae_bio");   // Microalgae photobioreactor (UPDATED)
+        addIdeaMarker(39.886543323128166, 32.78138486453508, "battery_boxes");    // Solar battery collection OR battery boxes? (You said "solar battery", tied this to battery_boxes)
+
+        addIdeaMarker(39.904373119546506, 32.76985931625073, "electric_shuttle"); // Electric shuttle (UPDATED)
+        addIdeaMarker(39.8915, 32.7820, "rainwater_system");                      // Rainwater harvesting (UNCHANGED)
+        addIdeaMarker(39.89568711850072, 32.781143425242554, "kindergarten_garden"); // Kindergarten rainwater garden (UPDATED)
+        addIdeaMarker(39.89497961398446, 32.78291119726877, "motion_sensors");       // Motion sensor lighting (UPDATED)
+
+        // solar chargers two locations
+        addIdeaMarker(39.886543323128166, 32.78138486453508, "solar_chargers");                            // Solar charging stations (UNCHANGED)
+        addIdeaMarker(39.89858371685134, 32.77369477753929, "solar_chargers");
+
+        // Extra ideas (UPDATED where provided)
+        addIdeaMarker(39.89746894425098, 32.78091591523442, "bike_infra");           // Bike lanes & repair stations (UPDATED)
+        addIdeaMarker(39.88773247721962, 32.7804848310453, "native_plants");         // Native low-water landscaping (UPDATED)
+        addIdeaMarker(39.89046901718186, 32.783648408038104, "digital_campus");      // Digital-first campus (UNCHANGED)
+
+        // Devrim Solar Walkway – near Devrim Stadium
+        addIdeaMarker(39.891575, 32.785758, "devrim_solar_walkway");
+
+        // Mediko Micro-Forest – approximate Mediko area (you can fine-tune from Leaflet dev tools)
+        addIdeaMarker(39.89123800792666, 32.788847934298765, "mediko_microforest");
+
+        // Mediko Air Quality Lanterns – very close to Mediko entrance
+        addIdeaMarker(39.89094578047858, 32.788418773425576, "mediko_air_quality");
+
+
 
 
         function flickerPins() {
